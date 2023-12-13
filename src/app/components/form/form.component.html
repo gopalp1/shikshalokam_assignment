@@ -1,0 +1,76 @@
+
+  <mat-card class="card">
+  <h1>{{list?.title | uppercase}}</h1>
+
+    <form [formGroup]="projectForm" *ngIf="showMe">
+      <mat-card class="cards" *ngFor="let data of list?.formFields">
+        <h3>{{data?.label | uppercase}}</h3>
+        <div class="" *ngFor="let form of data?.fields">
+
+          <mat-form-field appearance="outline" class="example-full-width"
+            *ngIf="form?.type != 'date' && form?.type != 'checkbox' && form?.type != 'radio'">
+            <mat-label>{{form?.label}}</mat-label>
+            <input matInput *ngIf="form?.type != 'select' && form?.type != 'date'" type="{{form?.type}}"
+              formControlName="{{form?.name}}" placeholder="{{form?.placeholder}}">
+            <mat-select formControlName="{{form?.name}}" *ngIf="form?.type === 'select'">
+              <mat-option *ngFor="let option of form?.options" value="{{option?.value}}">{{option?.label}}</mat-option>
+            </mat-select>
+
+            <mat-error class="field-text" *ngIf="projectForm.get(form?.name)?.touched && projectForm.get(form?.name)?.invalid" class="text-red-500">
+              <mat-error *ngIf="projectForm.get(form?.name)?.errors?.['required']">{{ form?.label }} is required.</mat-error>
+              <mat-error *ngIf="projectForm.get(form?.name)?.errors?.['pattern']">{{ form?.label }} is not valid.</mat-error>
+            </mat-error>
+
+           
+          </mat-form-field>
+
+        
+
+          <mat-form-field appearance="outline" class="example-full-width"  *ngIf="form?.type == 'date'">
+            <mat-label>{{form?.label}}</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="{{form?.name}}" (click)="picker.open()">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error class="field-text" *ngIf="projectForm.get(form?.name)?.touched && projectForm.get(form?.name)?.invalid" class="text-red-500">
+              <mat-error *ngIf="projectForm.get(form?.name)?.errors?.['required']">{{ form?.label }} is required.</mat-error>
+              <mat-error *ngIf="projectForm.get(form?.name)?.errors?.['pattern']">{{ form?.label }} is not valid.</mat-error>
+            </mat-error>
+          </mat-form-field> 
+       
+          <div class="align-input">
+            <mat-radio-group [formControlName]="form?.name" *ngIf="form?.type === 'radio'">
+            <legend >{{form?.label}} : </legend>
+              <mat-radio-button
+                *ngFor="let option of form.options"
+                [value]="option.value"
+              >
+                {{ option.label }}
+              </mat-radio-button>
+              <mat-error class="field-text" *ngIf="projectForm.get(form?.name)?.touched && projectForm.get(form?.name)?.invalid" class="text-red-500">
+                <mat-error *ngIf="projectForm.get(form?.name)?.errors?.['required']">{{ form?.label }} is required.</mat-error>
+              </mat-error>
+            </mat-radio-group>
+          </div> 
+         
+
+          <div class="align-input" *ngIf="form.type === 'checkbox'">
+            <legend >{{form?.label}} : </legend>
+            <mat-checkbox-group >
+              <mat-checkbox formControlName="{{form?.name}}"
+                *ngFor="let option of form?.options"
+                [value]="option?.value"
+              >
+                {{ option.label }}
+              </mat-checkbox>
+            </mat-checkbox-group>
+          </div>
+
+        </div>
+      </mat-card>
+      <div style= "float:right">
+        <button mat-raised-button color="primary" [disabled]="!projectForm.valid" (click)="submit()">Submit</button>
+      </div>
+    </form>
+  </mat-card>
+
+
